@@ -1,19 +1,11 @@
-% --------------------------- %
-% Yassir Yassin - ist1100611  %
-% --------------------------- %
+% Yassir Yassin - ist1100611  
+% --------------------------- 
+
+% base de conhecimento
 :- [dados],
    [keywords].
 
 
-
-% AUXILIAR
-unifica(p1, p1_2).
-unifica(p2, p1_2).
-unifica(p3, p3_2).
-unifica(p4, p3_2).
-
-
-   
 %      ____  __ 
 %     |___ \/_ |
 %       __) || |
@@ -24,6 +16,7 @@ unifica(p4, p3_2).
 
 %   eventosSemSalas(EventosSemSala) e verdade se EventosSemSala e uma lista, ordenada e
 %   sem elementos repetidos, de IDs de eventos sem sala;
+
 eventosSemSalas(EventosSemSala) :-
     findall(ID,
             evento(ID, _, _, _, semSala),
@@ -35,6 +28,7 @@ eventosSemSalas(EventosSemSala) :-
 %  EventosSemSala e uma lista, ordenada e sem elementos repetidos, de IDs de eventos sem sala
 %  que decorrem em DiaDaSemana (doravante segunda-feira, terca-feira, quarta-feira,
 %  quinta-feira, sexta-feira, sabado);
+
 eventosSemSalasDiaSemana(DiaDaSemana, EventosSemSala) :-
     findall(ID,
           horario(ID,
@@ -52,6 +46,7 @@ eventosSemSalasDiaSemana(DiaDaSemana, EventosSemSala) :-
 %  eventosSemSalasPeriodo(ListaPeriodos, EventosSemSala) e verdade se ListaPeriodos
 %  e uma lista de periodos (pi,i_{1,2,3,4}) e EventosSemSala e uma lista, ordenada e sem elemen-
 %  tos repetidos, de IDs de eventos sem sala nos periodos de ListaPeriodos.
+
 eventosSemSalasPeriodo([], []).
 eventosSemSalasPeriodo(ListaPeriodos, EventosSemSala) :-
     findall(ID,
@@ -90,64 +85,14 @@ eventosSemSalasPeriodo(ListaPeriodos, EventosSemSala) :-
 %  organizaEventos(ListaEventos, Periodo, EventosNoPeriodo) e verdade se
 %  EventosNoPeriodo e a lista, ordenada e sem elementos repetidos, de IDs dos eventos
 %  de ListaEventos que ocorrem no periodo Periodo para pi,i_{1,2,3,4}.
+
 organizaEventos([], _, []).
 organizaEventos([Evento|Tail], Periodo, EventosNoPeriodo) :-
-    (   Periodo=p1
-    ->  (   horario(Evento,
-                    _,
-                    _,
-                    _,
-                    _,
-                    p1)
-        ;   horario(Evento,
-                    _,
-                    _,
-                    _,
-                    _,
-                    p1_2)
-        )
-    ;   Periodo=p2
-    ->  (   horario(Evento,
-                    _,
-                    _,
-                    _,
-                    _,
-                    p2)
-        ;   horario(Evento,
-                    _,
-                    _,
-                    _,
-                    _,
-                    p1_2)
-        )
-    ;   Periodo=p3
-    ->  (   horario(Evento,
-                    _,
-                    _,
-                    _,
-                    _,
-                    p3)
-        ;   horario(Evento,
-                    _,
-                    _,
-                    _,
-                    _,
-                    p3_4)
-        )
-    ;   Periodo=p4
-    ->  (   horario(Evento,
-                    _,
-                    _,
-                    _,
-                    _,
-                    p4)
-        ;   horario(Evento,
-                    _,
-                    _,
-                    _,
-                    _,
-                    p3_4)
-        )
+    horario(Evento, _, _, _, _, Horario),
+    (   Periodo=p1, (Horario=p1; Horario=p1_2)
+    ;   Periodo=p2, (Horario=p2; Horario=p1_2)
+    ;   Periodo=p3, (Horario=p3; Horario=p3_4)
+    ;   Periodo=p4, (Horario=p4; Horario=p3_4)
     ), !,
     organizaEventos(Tail, Periodo, EventosNoPeriodoRestantes),
     EventosNoPeriodo_Uns=[Evento|EventosNoPeriodoRestantes],
@@ -160,6 +105,7 @@ organizaEventos([_|Tail], Periodo, EventosNoPeriodo) :-
 %  eventosMenoresQue(Duracao, ListaEventosMenoresQue) e verdade se
 %  ListaEventosMenoresQue e a lista ordenada e sem elementos repetidos dos identifica-
 %  dores dos eventos que tem duracao menor ou igual a Duracao.
+
 eventosMenoresQue(Duracao, ListaEventosMenoresQue) :-
     findall(ID,
             ( horario(ID,
@@ -176,6 +122,7 @@ eventosMenoresQue(Duracao, ListaEventosMenoresQue) :-
     
 %  eventosMenoresQueBool(ID, Duracao) e verdade se o evento identificado por ID tiver dura-
 %  cao igual ou menor a Duracao.
+
 eventosMenoresQueBool(ID, Duracao) :-
     horario(ID,
             _,
@@ -188,6 +135,7 @@ eventosMenoresQueBool(ID, Duracao) :-
 
 %  procuraDisciplinas(Curso, ListaDisciplinas) e verdade se ListaDisciplinas e a lista
 %  ordenada alfabeticamente do nome das disciplinas do curso Curso.
+
 procuraDisciplinas(Curso, ListaDisciplinas) :-
     findall(NomeDisciplina,
             ( turno(ID, Curso, _, _),
@@ -224,6 +172,7 @@ organizaDisciplinas([Disciplina|Tail], Curso, FirstSemester, SecondSemester, Sem
 %  horasCurso(Periodo, Curso, Ano, TotalHoras) e verdade se TotalHoras for o numero
 %  de horas total dos eventos associadas ao curso Curso, no ano Ano e periodo Periodo =
 %  pi,i_{1,2,3,4}. Mais uma vez: nao esquecer as disciplinas semestrais.
+
 horasCurso(Periodo, Curso, Ano, TotalHoras) :-
     (   Periodo=p1
         ;   Periodo=p2
@@ -396,6 +345,7 @@ ocupacaoCritica(HoraInicio, HoraFim, Threshold, Resultados) :-
 em que a primeira contem as pessoas de um lado da mesa (X1, X2 e X3), a segunda as
 pessoas a cabeceira (X4 e X5) e a terceira as pessoas do outro lado da mesa (X6, X7 e X8)*/
 
+% Preenche a mesa com as pessoas da lista de pessoas
 fill_table([X1,X2,X3,X4,X5,X6,X7,X8], [[X1,X2,X3],[X4,X5],[X6,X7,X8]]).
 
 ocupacaoMesa(ListaPessoas, ListaRestricoes, OcupacaoMesa) :-
@@ -406,6 +356,7 @@ ocupacaoMesa(ListaPessoas, ListaRestricoes, OcupacaoMesa) :-
 
 
 
+% Verifica se a mesa satisfaz as restricoes
 verificaRestricoes(OcupacaoMesa, ListaRestricoes) :-
     forall(member(Restricao, ListaRestricoes), verificaRestricao(OcupacaoMesa, Restricao)).
 
